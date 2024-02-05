@@ -1,20 +1,19 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
-import { encode, generateId } from '../utils/crypt'
+import { encode, hashedValue } from '../utils/crypt'
 import { USER_SECERT, BASE_URL, USER_ID } from '../App'
 
 const KB = 1024
 const CHUNK_SIZE = 500 * KB
 
-export default function PreviewFile() {
+export default function UploadFile({ setFiles }) {
     
   let [selectedFile, setSelectedFile] = useState(null)
   let [currentChunkIndex, setCurrentChunkIndex] = useState(null)
   let [totalChunks, setTotalChunks] = useState(null)
   let [fileId, setFileId] = useState("")
 
-  let [isFileUploaded, setFileUploaded] = useState(false)
   let [file, setFile] = useState("")
 
   let handleChangeInFile = (e) => {
@@ -41,22 +40,6 @@ export default function PreviewFile() {
     reader.readAsDataURL(blob)
   }
 
-  let showImage = () => {
-    setFileUploaded(true)
-
-    // const reader = new FileReader()
-    // if(!selectedFile) return
-
-    // const blob = selectedFile
-    // reader.onload = e => {
-    //   console.log("show image")
-    //   setFileUploaded(true)
-    //   setFile(e.target.result)
-    // }
-
-    // reader.readAsDataURL(blob)
-  }
-
   let uploadChuck = (readerEvent) => {
     const data = readerEvent.target.result
 
@@ -64,7 +47,7 @@ export default function PreviewFile() {
 
     const params = new URLSearchParams();
     params.set('currentChunkIndex', currentChunkIndex)
-    params.set('fileId', encode(`${currentChunkIndex}${fileId}`, USER_SECERT))
+    params.set('fileId', hashedValue(`${currentChunkIndex}${fileId}`))
 
     const headers = {
       'Content-Type': 'application/octet-stream'
@@ -96,12 +79,16 @@ export default function PreviewFile() {
       return;
     }
 
+    let fileId = hashedValue(Date.now())
+    setFileId(fileId)
+
+
     const data = {
       'name': selectedFile.name, 
       'size': selectedFile.size, 
       'type': selectedFile.type, 
       'totalChunks': totalChunks,
-      'fileId': generateId(),
+      'fileId': encode(fileId, USER_SECERT),
       'userId': USER_ID
     }
     
@@ -111,9 +98,8 @@ export default function PreviewFile() {
       .then((res) => {
         console.log("Then Response");
         if(res.status == 200){
-          console.log(`file added ${res.data.message}`);
-          setFileId(res.data.received.fileId)
           
+          setFile(data)
           handleSendFile()
         } else {
           console.log(res.status);
@@ -126,29 +112,6 @@ export default function PreviewFile() {
 
   }
 
-  let downloadFile = () => {
-    let url;
-    for (let i = 0; i < totalChunks; i++) {
-      let chunkId = `${i}${fileId}`
-      url = `${BASE_URL}files/chunk/download/${encode(chunkId, USER_SECERT)}`
-      
-      axios.get(url)
-        .then((res) => {
-          console.log("Then Response");
-          if(res.status == 200){
-            let chunk = res.data.chunk.data.toString()
-            setFile(file+chunk)
-
-          } else {
-            console.log(res.status);
-          }
-        })
-        .catch((err) => {
-          console.log("Catch Response");
-          console.log(err);
-        })
-    }
-  }
 
   // Effect to send chunked data
   useEffect(() => {
@@ -157,6 +120,10 @@ export default function PreviewFile() {
     if(currentChunkIndex != null && currentChunkIndex<totalChunks) {
       readAndUploadCurrentChunk()
     } 
+
+    if(currentChunkIndex && currentChunkIndex == totalChunks) {
+      setFiles((prev) => [...prev, file])
+    }
   }, [currentChunkIndex])
 
 
@@ -166,11 +133,5 @@ export default function PreviewFile() {
         </div>
 
         <button onClick={uploadFile}>Send File</button>
-        <button onClick={showImage}>Show File</button>
-        <button onClick={downloadFile}>Download File</button>
-
-        {
-            isFileUploaded && <img src={file} width={700} height={400}/>
-        }
     </>
 }

@@ -1,59 +1,48 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { BASE_URL, USER_ID, USER_SECERT } from "../App"
+import { decode, hashedValue } from "../utils/crypt"
+
+import PreviewFile from "../components/PreviewFile";
 
 
-export default function Files() {
-    const [files, setFiles] = useState([])
+export default function Files({ files, setFiles }) {
+
     useEffect(() => {
-        const url = `${BASE_URL}files/${USER_ID}`
+      const url = `${BASE_URL}files/${USER_ID}`
         axios.get(url)
             .then((res) => {
-                setFiles([...files, ...res.data.files])
+                let newFiles = []
+
+                res.data.data.map(file => {
+                  let newFile = {
+                    ...file, 
+                    'fileId': decode(file.fileId, USER_SECERT) 
+                  }
+                  newFiles.push(newFile)
+                })
+
+                if(newFiles) setFiles([...newFiles])
+                
             })
             .catch((err) => {
                 console.log(err);
             })
-    }, [])
-
-    let downloadFile = () => {
-        let url;
-        for (let i = 0; i < totalChunks; i++) {
-          let chunkId = `${i}${fileId}`
-          url = `${BASE_URL}files/chunk/download/${encode(chunkId, USER_SECERT)}`
-          
-          axios.get(url)
-            .then((res) => {
-              console.log("Then Response");
-              if(res.status == 200){
-                let chunk = res.data.chunk.data.toString()
-                setFile(file+chunk)
-    
-              } else {
-                console.log(res.status);
-              }
-            })
-            .catch((err) => {
-              console.log("Catch Response");
-              console.log(err);
-            })
-        }
-      }
+    }, [files.length])
 
     return (
-        <>
-            {
-                files.map(file => {
-                    <div style={{
-                        flexDirection: 'row'
-                    }}>
+      <>
+        <div style={{
+          border: "red solid 2px",
+          padding: "20px"
+        }}>
+          {
+            !files.length 
+              ? <p>No Files are there</p>
 
-                        <p>{file.name} - {file.size}</p>
-                        <button onClick={downloadFile}>Download File</button>
-                    
-                    </div>
-                })
-            }
-        </>
+              : files.map(file => <PreviewFile key={file.fileId} file={file}/>)
+          }
+        </div>
+      </>
     )
 }
