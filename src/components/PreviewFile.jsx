@@ -49,7 +49,20 @@ export default function PreviewFile({file}) {
         <div style={{
             flexDirection: 'row'
         }}>
-            { bufferedArray.length === totalChunks && <img src={bufferedArray.join("")} width={700} height={400}/> } 
+            {
+              bufferedArray.length === totalChunks && 
+                (
+                  type.includes('pdf') 
+                    ? <object   
+                        data={bufferedArray.join("")+"#toolbar=0"}
+                        width="100%"
+                        height={400}
+                        type={type}
+                  
+                      />
+                    :<img src={bufferedArray.join("")} width={700} height={400}/> 
+                )
+            } 
             
             <p>{(name.length > 10) ? `${name.substring(0, 10)}...` : name } - {((size/1024)/1024).toFixed(2)}MB</p>
             <button onClick={() => {
