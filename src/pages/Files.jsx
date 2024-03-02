@@ -1,7 +1,6 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
-import { BASE_URL, USER_ID, USER_SECERT } from "../App"
-import { decode, hashedValue } from "../utils/crypt"
+import { useEffect } from "react"
+import { BASE_URL, USER_ID } from "../App"
 
 import PreviewFile from "../components/PreviewFile";
 
@@ -12,37 +11,30 @@ export default function Files({ files, setFiles }) {
       const url = `${BASE_URL}files/${USER_ID}`
         axios.get(url)
             .then((res) => {
-                let newFiles = []
-
-                res.data.data.map(file => {
-                  let newFile = {
-                    ...file, 
-                    'fileId': decode(file.fileId, USER_SECERT) 
-                  }
-                  newFiles.push(newFile)
-                })
-
-                if(newFiles) setFiles([...newFiles])
-                
+              console.log(`${res.status} files: ${res.data.data.length}`);
+          
+              let newFiles = [...files, ...res.data.data]
+    
+              if(newFiles && newFiles.length != 0) setFiles(newFiles)
+              
             })
             .catch((err) => {
                 console.log(err);
             })
-    }, [files.length])
+    }, [])
 
     return (
-      <>
-        <div style={{
-          border: "red solid 2px",
-          padding: "20px"
-        }}>
-          {
-            !files.length 
-              ? <p>No Files are there</p>
+      <div key={"filesComponent"} style={{
+        border: "red solid 2px",
+        padding: "20px",
+        flexDirection: 'column'
+      }}>
+        {
+          !files.length 
+            ? <p>No Files are there</p>
 
-              : files.map(file => <PreviewFile key={file.fileId} file={file}/>)
-          }
-        </div>
-      </>
+            : files.map(file => <PreviewFile key={file.fileId} file={file}/>)
+        }
+      </div>
     )
 }

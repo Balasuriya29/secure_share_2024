@@ -10,41 +10,41 @@ const CHUNK_SIZE = 500 * KB
 export default function UploadFile({ setFiles }) {
     
   let [selectedFile, setSelectedFile] = useState(null)
+  let [fileId, setFileId] = useState("")
+  let [file, setFile] = useState({})
+  
+  let [fileArray, setFileArray] = useState([])
+
   let [currentChunkIndex, setCurrentChunkIndex] = useState(null)
   let [totalChunks, setTotalChunks] = useState(null)
-  let [fileId, setFileId] = useState("")
-
-  let [file, setFile] = useState("")
 
   let handleChangeInFile = (e) => {
     const file = e.target.files[0]
 
-    setSelectedFile(file)
-    setTotalChunks(Math.ceil(file.size / CHUNK_SIZE))
+    readFile(file)
   } 
 
-  let handleSendFile = () => setCurrentChunkIndex(0)
-
-  let readAndUploadCurrentChunk = () => {
+  let readFile = (file) => {
     const reader = new FileReader()
-    if(!selectedFile) return
-
-    const from = currentChunkIndex * CHUNK_SIZE
-    const to = from + CHUNK_SIZE
-
-    console.log(from+"----"+to);
-
-    const blob = selectedFile.slice(from, to)
-    reader.onload = e => uploadChuck(e)
-
-    reader.readAsDataURL(blob)
+    if(!file) return
+    
+    reader.onload = e => {
+      storeFile(e, file)
+    }
+    reader.readAsDataURL(file)
   }
 
-  let uploadChuck = (readerEvent) => {
-    const data = readerEvent.target.result
+  let storeFile = (readerEvent, file) => {
+    let newFileArray = readerEvent.target.result.match(new RegExp('.{1,' + CHUNK_SIZE + '}', 'g'))
+      
+    setFileArray(newFileArray)
+    setSelectedFile(file)
+    setTotalChunks(newFileArray.length)
+  }
 
-    console.log("-->>"+`${currentChunkIndex}${fileId}`);
-
+  let startChunkUpload = () => {
+    let data = encode(fileArray[currentChunkIndex], USER_SECERT)
+    
     const params = new URLSearchParams();
     params.set('currentChunkIndex', currentChunkIndex)
     params.set('fileId', hashedValue(`${currentChunkIndex}${fileId}`))
@@ -57,14 +57,11 @@ export default function UploadFile({ setFiles }) {
 
     axios.post(url, data, {headers})
       .then((res) => {
-        console.log("Then Response -> "); 
+        console.log(`Then Response -> ${res.status}`); 
         if(res.status == 200) {
           console.log(`chunk ${currentChunkIndex} added ${res.data.message}`);
 
-          console.log("Next Chunk:");
           setCurrentChunkIndex(++currentChunkIndex)
-        } else {
-          console.log(res.status);
         }
       })
       .catch((err) => {
@@ -75,13 +72,12 @@ export default function UploadFile({ setFiles }) {
 
   let uploadFile = () => {
     if(!selectedFile) {
-      console.log("Select A File❗");
-      return;
+      console.log("Select A File❗")
+      return
     }
 
-    let fileId = hashedValue(Date.now())
+    let fileId = hashedValue(Date.now().toString()+USER_ID)
     setFileId(fileId)
-
 
     const data = {
       'name': selectedFile.name, 
@@ -96,29 +92,23 @@ export default function UploadFile({ setFiles }) {
     
     axios.post(url, data)
       .then((res) => {
-        console.log("Then Response");
+        console.log(`Then Response for file upload ${res.status}`);
         if(res.status == 200){
-          
           setFile(data)
-          handleSendFile()
-        } else {
-          console.log(res.status);
-        }
+          setCurrentChunkIndex(0)
+        }   
       })
       .catch((err) => {
-        console.log("Catch Response");
+        console.log(`Catch Response for file upload`);
         console.log(err);
       })
-
   }
 
 
   // Effect to send chunked data
-  useEffect(() => {
-    console.log(currentChunkIndex +" ---- "+ totalChunks);
-    
+  useEffect(() => {    
     if(currentChunkIndex != null && currentChunkIndex<totalChunks) {
-      readAndUploadCurrentChunk()
+      startChunkUpload()
     } 
 
     if(currentChunkIndex && currentChunkIndex == totalChunks) {
@@ -129,7 +119,7 @@ export default function UploadFile({ setFiles }) {
 
     return <>
         <div>
-        <input type='file' onChange={handleChangeInFile}/>
+          <input type='file' onChange={handleChangeInFile}/>
         </div>
 
         <button onClick={uploadFile}>Send File</button>

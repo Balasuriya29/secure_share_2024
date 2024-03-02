@@ -11,10 +11,10 @@ export const USER_ID = "12345"
 function App() {
   const [files, setFiles] = useState([])
 
-  let handleSetFiles = (newFile) => {
+  let handleSetFiles = (newFiles) => {
     console.log("setting new files");
 
-    setFiles((prev) => [...prev, newFile])
+    setFiles(newFiles)
   }
 
   return (
