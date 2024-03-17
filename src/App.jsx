@@ -40,10 +40,10 @@ function App() {
                   <div className='w-[70%] pb-6 pr-[4%]'>
                       <HomePageHeaderWrapper title={"Upload"} showViewAll={false}/> 
                       <FileUpload/>
-                      <div className='mt-[4%]'>
+                      {/* <div className='mt-[4%]'>
                         <HomePageHeaderWrapper title={"Folders"} showViewAll={true}/>
                       </div>
-                      <FolderCard/>
+                      <FolderCard/> */}
                       <div className='mt-[4%]'>
                         <HomePageHeaderWrapper title={"Files"} showViewAll={true}/>
                       </div>

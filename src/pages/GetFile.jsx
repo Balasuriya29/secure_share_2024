@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {io} from "socket.io-client";
 
 const GetFile = () => {
+
+    const {shareId}  = useParams();
+
     useEffect(()=>{
         const socket = io("http://localhost:3001");
         socket.emit('getFile',{
-            fileId:"sdfsf3"
+            shareId:shareId
         });
         socket.on('fileStatus',(data)=>{
             setShowFile(data["showFile"])

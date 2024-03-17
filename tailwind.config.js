@@ -14,6 +14,7 @@ export default {
       colors:{
         lightGray : "#F4F5F6",
         violet:"#E8EAFF",
+        lightViolet : "#ECEDFE"
       }
     },
   },

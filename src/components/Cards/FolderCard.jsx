@@ -57,17 +57,14 @@ const FolderCard = () => {
                     <FileIcon height={"25"} width={"25"}/>
                 </div>
                 <div>Foldername</div>
-                <div className="flex-2">
+                <div className="flex-2 cursor-pointer" onClick={(e)=>setAnchorEl(e.currentTarget)}>
                     <OptionsIcon/>
                 </div>
-            </div>
-            {/* <div className="flex-4" onClick={(e)=>setAnchorEl(e.currentTarget)}>
-                <MenuListIcon height={"25"} width={"25"}/>
             </div>
             <MenuOptions anchorEl={anchorEl} setAnchorEl={setAnchorEl} menuItems={menuItems} handleAction={handleAction}/>
             <ShareModal open={open} handleClose={()=>{
                 setIsOpen(false);
-            }}/> */}
+            }}/> 
         </div>
     )
 }

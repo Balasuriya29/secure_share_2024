@@ -1,8 +1,44 @@
+import { useState } from "react";
 import FileIcon from "../../assets/FileIcon";
 import MenuListIcon from "../../assets/MenuListIcon";
 import OptionsIcon from "../../assets/OptionsIcon";
+import MenuOptions from "../MenuOptions/MenuOptions";
+import ShareModal from "../Modals/ShareModal";
+import FavouriteIcon from "../../assets/FavouriteIcon";
+import ShareIcon from "../../assets/ShareIcon";
+import TrashIcon from "../../assets/TrashIcon";
 
 const FileCard = () => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [open,setIsOpen] = useState(false);
+
+    const menuItems = [
+        {
+            id:1,
+            name:"Add to favourites",
+            icon: FavouriteIcon
+        },
+        {
+            id:2,
+            name:"Share",
+            icon: ShareIcon
+        },
+        {
+            id:3,
+            name:"Move to trash",
+            icon: TrashIcon
+        }
+    ]
+
+    const handleAction = (id) => {
+        switch(id){
+            case 2:{
+                setIsOpen(true);
+                break;
+            }
+        }
+    }
+
     return (
         <div className="
             w-full bg-white 
@@ -35,9 +71,13 @@ const FileCard = () => {
             <div className="flex-2">
                 2mb
             </div>
-            <div className="flex-2">
+            <div className="flex-2 cursor-pointer" onClick={(e)=>setAnchorEl(e.currentTarget)}>
                 <OptionsIcon/>
             </div>
+            <MenuOptions anchorEl={anchorEl} setAnchorEl={setAnchorEl} menuItems={menuItems} handleAction={handleAction}/>
+            <ShareModal open={open} handleClose={()=>{
+                setIsOpen(false);
+            }}/> 
         </div>
     )
 }

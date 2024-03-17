@@ -6,11 +6,9 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import LocationTest from './pages/LocationTest.jsx'
-import SSE from './pages/SSE.jsx'
 import GetFile from './pages/GetFile.jsx'
-import Test from './pages/test.jsx'
 import NavBar from './components/Navbar/NavBar.jsx';
+import SharedFilesPage from './pages/SharedFilesPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -18,24 +16,12 @@ const router = createBrowserRouter([
     element: <App/>,
   },
   {
-    path: "/token",
-    element: <NavBar/>
+    path: "/file/share/:shareId",
+    element: <GetFile/>
   },
   {
-    path : "/location",
-    element : <LocationTest/>
-  },
-  {
-    path : "/sse",
-    element : <SSE/>
-  },
-  {
-    path : "/file",
-    element : <GetFile/>
-  },
-  {
-    path :"/test",
-    element : <Test/>
+    path : "/shared",
+    element: <SharedFilesPage/>
   }
 ]);
 
