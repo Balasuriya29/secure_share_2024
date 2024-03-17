@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import SideBar from "../components/SideBar/SideBar";
-import { getSharedFiles, getUserFromCookie } from "../utils";
+import { getSharedFiles, getUserFromCookie } from "../utils/helper";
 import { useNavigate } from "react-router-dom";
 
 const SharedFilesPage = () => {

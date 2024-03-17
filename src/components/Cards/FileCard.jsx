@@ -1,14 +1,29 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FileIcon from "../../assets/FileIcon";
 import MenuListIcon from "../../assets/MenuListIcon";
 import OptionsIcon from "../../assets/OptionsIcon";
-import MenuOptions from "../MenuOptions/MenuOptions";
-import ShareModal from "../Modals/ShareModal";
+import axios from "axios";
+import { bytesConverter } from "../../utils/helper";
 import FavouriteIcon from "../../assets/FavouriteIcon";
 import ShareIcon from "../../assets/ShareIcon";
 import TrashIcon from "../../assets/TrashIcon";
+import MenuOptions from "../MenuOptions/MenuOptions";
+import ShareModal from "../Modals/ShareModal";
 
-const FileCard = () => {
+const FileCard = ({file}) => {
+    const {
+        _id,
+        fileId,
+        name,
+        size,
+        type,
+        created_at,
+        totalChunks,
+        userId,
+    } = file
+
+    
+
     const [anchorEl, setAnchorEl] = useState(null);
     const [open,setIsOpen] = useState(false);
 
@@ -39,6 +54,17 @@ const FileCard = () => {
         }
     }
 
+      let createdAtString = useMemo(() => {
+        return new Date(created_at).toDateString()
+      }, [created_at])
+
+      let fileSize = useMemo(() => {
+        return bytesConverter(size)
+      }, [size])
+
+     
+
+
     return (
         <div className="
             w-full bg-white 
@@ -57,25 +83,25 @@ const FileCard = () => {
                 </div>
             </div>
             <div className="flex-2">
-                FileName
+                {(name.length > 10) ? `${name.substring(0, 10)}...` : name }
             </div>
             <div className="flex-2">
-                PDF
+                {type.substring(type.indexOf('/')+1)}
             </div>
             <div className="flex-2">
+                {createdAtString}
+            </div>
+            {/* <div className="flex-2">
                 Feb 14,2024
-            </div>
+            </div> */}
             <div className="flex-2">
-                Feb 14,2024
-            </div>
-            <div className="flex-2">
-                2mb
+                {fileSize}
             </div>
             <div className="flex-2 cursor-pointer" onClick={(e)=>setAnchorEl(e.currentTarget)}>
                 <OptionsIcon/>
             </div>
             <MenuOptions anchorEl={anchorEl} setAnchorEl={setAnchorEl} menuItems={menuItems} handleAction={handleAction}/>
-            <ShareModal open={open} handleClose={()=>{
+            <ShareModal fileId={fileId} totalChunks={totalChunks} open={open} handleClose={()=>{
                 setIsOpen(false);
             }}/> 
         </div>
@@ -83,3 +109,23 @@ const FileCard = () => {
 }
 
 export default FileCard;
+
+
+/**
+ * 
+ * 
+ * {
+              bufferedArray.length === totalChunks && 
+                (
+                  type.includes('pdf') 
+                    ? <object   
+                        data={bufferedArray.join("")+"#toolbar=0"}
+                        width="100%"
+                        height={400}
+                        type={type}
+                  
+                      />
+                    :<img src={bufferedArray.join("")} width={700} height={400}/> 
+                )
+            } 
+ */

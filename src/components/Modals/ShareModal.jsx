@@ -6,9 +6,9 @@ import GeoLocationDetails from "../ShareAttributeDetails/GeoLocationDetails";
 import ShareAttribute from "../ShareAttribute/ShareAttribute";
 import TimeExpirationDetails from "../ShareAttributeDetails/TimeExpirationDetails";
 import ShareIconV2 from "../../assets/ShareIconV2";
-import { getShareLink } from "../../utils";
+import { getShareLink } from "../../utils/helper";
 
-const ShareModal = ({ open, handleClose }) => {
+const ShareModal = ({ fileId, totalChunks , open, handleClose }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -40,8 +40,9 @@ const ShareModal = ({ open, handleClose }) => {
       return;
     }
     const data = {
-      fileId: "65e369f6d90a4ee4adc79d4d",
+      fileId: fileId,
       userId: "65f1ee104a569a3ec08f7fbe",
+      totalChunks:totalChunks,
       shareTypes: ["time"],
       shareAttributes: {
         time:{

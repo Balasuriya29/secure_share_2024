@@ -1,7 +1,7 @@
 import DropdownIcon from "../../assets/DropdownIcon";
 import GoogleIcon from "../../assets/GoogleIcon";
 import NotificationIcon from "../../assets/NotificationIcon";
-import { getGoogleOAuthURL } from "../../utils";
+import { getGoogleOAuthURL } from "../../utils/helper";
 import SearchBar from "../SearchBar";
 
 const NavBar = ({userDetails}) => {

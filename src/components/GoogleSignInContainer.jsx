@@ -1,5 +1,5 @@
 import GoogleIcon from "../assets/GoogleIcon"
-import { getGoogleOAuthURL } from "../utils"
+import { getGoogleOAuthURL } from "../utils/helper"
 
 const GoogleSignInContainer = ({isUserLoggedIn,userDetails}) => {
     return (
