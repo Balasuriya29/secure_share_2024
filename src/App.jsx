@@ -10,12 +10,33 @@ import FileUploadIcon from './assets/FileUpload'
 import ShareIconV2 from './assets/ShareIconV2'
 import ViewAllContainer from './components/TextWrappers/ViewAllContainer'
 import NavBar from './components/Navbar/NavBar'
-import { getUserFromCookie } from './utils';
+import { getUserFromCookie } from './utils/helper';
 import FileUpload from './components/FileUpload';
+import Files from './pages/Files'
  
-
+export const BASE_URL = 'http://localhost:3000/api/'
+export const USER_SECERT = "mydekumeansyoucandoit@2911"
+export const USER_ID = "12345"
 
 function App() {
+
+  const [files, setFiles] = useState([])
+
+  let handleSetFiles = (newFiles) => {
+    console.log("setting new files");
+
+    let finalFiles = [...files, ...newFiles]
+    finalFiles.sort((a, b) => {
+      let d1 = parseInt(a.created_at)
+      let d2 = parseInt(b.created_at)
+
+      if (d1 < d2) return 1;
+      if (d1 > d2) return -1;
+    })
+
+
+    setFiles(finalFiles)
+  }
 
   const [userDetails,setUserDetails] = useState();
   const [isUserLoggedIn,setIsUserLoggedIn] = useState(false);
@@ -39,7 +60,7 @@ function App() {
                 <div className='w-full flex-grow flex mt-[2%]'>
                   <div className='w-[70%] pb-6 pr-[4%]'>
                       <HomePageHeaderWrapper title={"Upload"} showViewAll={false}/> 
-                      <FileUpload/>
+                      <FileUpload setFiles={handleSetFiles}/>
                       <div className='mt-[4%]'>
                         <HomePageHeaderWrapper title={"Folders"} showViewAll={true}/>
                       </div>
@@ -47,7 +68,7 @@ function App() {
                       <div className='mt-[4%]'>
                         <HomePageHeaderWrapper title={"Files"} showViewAll={true}/>
                       </div>
-                      <FileCard/>
+                      <Files files={files} setFiles={handleSetFiles}/>
                   </div>
                   <div className='w-[30%] pl-[4%] h-[80vh]'>
                     <HomePageHeaderWrapper title={"File Preview"} showViewAll={false}/> 
