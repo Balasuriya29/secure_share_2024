@@ -1,19 +1,136 @@
+import axios from 'axios'
 import FileUploadIcon from "../assets/FileUpload"
+import { useEffect, useState } from 'react'
 
-const FileUpload = () => {
+import { encode, hashedValue } from '../utils/crypt'
+import { USER_SECERT, BASE_URL, USER_ID } from '../App'
+
+const KB = 1024
+const CHUNK_SIZE = 500 * KB
+
+const FileUpload = ({ setFiles }) => {
+      
+  // let [selectedFile, setSelectedFile] = useState(null)
+  let [fileId, setFileId] = useState("")
+  let [fileArray, setFileArray] = useState([])
+
+  let [currentChunkIndex, setCurrentChunkIndex] = useState(null)
+  let [totalChunks, setTotalChunks] = useState(null)
+
+  let readFile = (file) => {
+    const reader = new FileReader()
+    if(!file) return
     
+    reader.onload = e => {
+      storeFile(e, file)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  let storeFile = (readerEvent, file) => {
+    let newFileArray = readerEvent.target.result.match(new RegExp('.{1,' + CHUNK_SIZE + '}', 'g'))
+      
+    setFileArray(newFileArray)
+    setTotalChunks(newFileArray.length)
+
+    uploadFile(file)
+  }
+
+  let startChunkUpload = () => {
+    let data = encode(fileArray[currentChunkIndex], USER_SECERT)
+    
+    const params = new URLSearchParams();
+    params.set('currentChunkIndex', currentChunkIndex)
+    params.set('fileId', hashedValue(`${currentChunkIndex}${fileId}`))
+
+    const headers = {
+      'Content-Type': 'application/octet-stream'
+    }
+
+    const url = `${BASE_URL}files/chunk/upload?${params.toString()}`
+
+    axios.post(url, data, {headers})
+      .then((res) => {
+        console.log(`Then Response -> ${res.status}`); 
+        if(res.status == 200) {
+          console.log(`chunk ${currentChunkIndex} added ${res.data.message}`);
+
+          setCurrentChunkIndex(++currentChunkIndex)
+        }
+      })
+      .catch((err) => {
+        console.log("Catch Response -> ");
+        console.log(err);
+      })
+  }
+
+  let uploadFile = (selectedFile) => {
+    if(!selectedFile) {
+      console.log("Select A File❗")
+      return
+    }
+
+    let fileId = hashedValue(Date.now().toString()+USER_ID)
+    setFileId(fileId)
+
+    const data = {
+      'name': selectedFile.name, 
+      'size': selectedFile.size, 
+      'type': selectedFile.type, 
+      'totalChunks': totalChunks,
+      'created_at': Date.now(), 
+      'fileId': encode(fileId, USER_SECERT),
+      'userId': USER_ID
+    }
+    
+    const url = `${BASE_URL}files/file/upload`
+    
+    axios.post(url, data)
+      .then((res) => {
+        console.log(`Then Response for file upload ${res.status}`);
+        if(res.status == 200){
+          setFiles(data)
+          setCurrentChunkIndex(0)
+        }   
+      })
+      .catch((err) => {
+        console.log(`Catch Response for file upload`);
+        console.log(err);
+      })
+  }
+
+
+  // Effect to send chunked data
+  useEffect(() => {    
+    if(currentChunkIndex != null && currentChunkIndex<totalChunks) {
+      startChunkUpload()
+    }
+  }, [currentChunkIndex])
+
+
   const openFilePicker = () => {
     document.getElementById('filePickerElement').click();
   }
 
   const handleFileChange = (e) => {
-    console.log('-------File upload change------');
-    console.log(e.target.value);
+    let lsFiles = e.target.files
+    
+    for (const key in lsFiles) {
+      if (Object.hasOwnProperty.call(lsFiles, key)) {
+        const file = lsFiles[key];
+        
+        console.log(file);
+        readFile(file)
+      }
+    }
+    
+    // const file = e.target.files[0]
+
+    // readFile(file)
   }
 
   const handleDrop = (e) => {
-    console.log("--------On file drop---------");
-    console.log(e);
+    handleFileChange(e)
   }
 
   const handleDragOver = (e) => {
@@ -33,7 +150,7 @@ const FileUpload = () => {
                 <FileUploadIcon/>
             </div>
             <div className='font-[500] text-lg'>
-            <input type='file' onChange={handleFileChange} accept='.pdf,.jpg,.jpeg,.png' className='hidden' id='filePickerElement'></input>
+            <input multiple="multiple" type='file' onChange={handleFileChange} accept='.pdf,.jpg,.jpeg,.png' className='hidden' id='filePickerElement'></input>
             Drag and drop files, or <span className='text-[#4253ED] cursor-pointer' onClick={openFilePicker}>Browse</span>
             </div>
         </div>
