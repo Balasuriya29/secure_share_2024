@@ -77,3 +77,9 @@ export const bytesConverter = (x) => {
 
   return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
 };
+
+export const getShortenedFileName = (name, endIndex) =>
+  name.length > endIndex ? `${name.substring(0, endIndex)}...` : name;
+
+export const getFileType = (type) =>
+  type.substring(type.indexOf("/") + 1).toUpperCase();

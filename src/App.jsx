@@ -57,12 +57,19 @@ function App() {
           <NavBar userDetails={userDetails} />
           <div className="w-full flex-grow flex mt-[2%]">
             <div className="w-[70%] pb-6 pr-[4%]">
-              <HomePageHeaderWrapper title={"Upload"} showViewAll={false} />
-              <FileUpload />
-              <div className="mt-[4%]">
-                <HomePageHeaderWrapper title={"Files"} showViewAll={true} />
-              </div>
-              <Files files={files} setFiles={handleSetFiles} />
+              <div>
+                      <HomePageHeaderWrapper title={"Upload"} showViewAll={false}/> 
+                      <FileUpload setFiles={handleSetFiles}/>
+                    </div>
+                    <div>
+
+                      <div className='mt-[4%]'>
+                        <div className='flex items-center justify-between'>
+                            <div className='font-[600] text-xl'>Files</div>
+                        </div>    
+                      </div>
+                      <Files files={files} setFiles={handleSetFiles}/>
+                    </div>
             </div>
             <div className="w-[30%] pl-[4%] h-[80vh]">
               <HomePageHeaderWrapper
