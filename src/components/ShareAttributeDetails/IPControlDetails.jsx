@@ -1,7 +1,7 @@
 import { useState } from "react";
 import constants from "../../constants";
 
-const GeoLocationDetails = ({ radius, setRadius }) => {
+const IPControlDetails = ({ noOfIP, setNoOfIP }) => {
   const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
@@ -11,7 +11,7 @@ const GeoLocationDetails = ({ radius, setRadius }) => {
     } else {
       setError("");
     }
-    setRadius(value);
+    setNoOfIP(value);
   };
 
   return (
@@ -20,19 +20,19 @@ const GeoLocationDetails = ({ radius, setRadius }) => {
         error !== "" ? "border-red-400" : ""
       } `}
     >
-      <div>
-        <input
-          className="
-            focus:border-none focus:outline-none active:border-none
-             w-[75%] h-[60px]  rounded-tl-[12px]  rounded-bl-[12px]"
-          type="text"
-          value={radius}
-          placeholder="Radius (m)"
-          onChange={handleInputChange}
-        />
-      </div>
+      <input
+        className={`
+              focus:border-none focus:outline-none active:border-none
+              w-[75%] h-[60px]
+              `}
+        type="text"
+        placeholder="01"
+        value={noOfIP}
+        onChange={handleInputChange}
+      />
+      <div className="self-center text-[#7D7D7D]">users</div>
     </div>
   );
 };
 
-export default GeoLocationDetails;
+export default IPControlDetails;

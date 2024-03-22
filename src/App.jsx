@@ -10,13 +10,11 @@ import FileUploadIcon from "./assets/FileUpload";
 import ShareIconV2 from "./assets/ShareIconV2";
 import ViewAllContainer from "./components/TextWrappers/ViewAllContainer";
 import NavBar from "./components/Navbar/NavBar";
-import { getUserFromCookie } from "./utils/helper";
+import { getCurrentUserDetails } from "./utils/helper";
 import FileUpload from "./components/FileUpload";
 import Files from "./pages/Files";
 
-export const BASE_URL = "http://localhost:3000/api/";
 export const USER_SECERT = "mydekumeansyoucandoit@2911";
-export const USER_ID = "12345";
 
 function App() {
   const [files, setFiles] = useState([]);
@@ -40,11 +38,10 @@ function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   useEffect(() => {
-    const userDataFromCookie = getUserFromCookie();
-    console.log(userDataFromCookie);
-    if (userDataFromCookie) {
-      setUserDetails(JSON.parse(userDataFromCookie));
-      console.log(JSON.parse(userDataFromCookie));
+    const userData = getCurrentUserDetails();
+    console.log(userData);
+    if (userData) {
+      setUserDetails(userData);
       setIsUserLoggedIn(true);
     }
   }, []);
@@ -56,15 +53,28 @@ function App() {
         <div className="w-[85%] py-[1%] px-[3%] bg-white">
           <NavBar userDetails={userDetails} />
           <div className="w-full flex-grow flex mt-[2%]">
-            <div className="w-[70%] pb-6 pr-[4%]">
+            {/* TODO:Change width to 70% while showing preview */}
+
+            <div className="w-[100%] pb-6 pr-[4%]">
               <HomePageHeaderWrapper title={"Upload"} showViewAll={false} />
-              <FileUpload />
+              {isUserLoggedIn && (
+                <FileUpload
+                  userId={userDetails["userId"]}
+                  setFiles={setFiles}
+                />
+              )}
               <div className="mt-[4%]">
                 <HomePageHeaderWrapper title={"Files"} showViewAll={true} />
               </div>
-              <Files files={files} setFiles={handleSetFiles} />
+              {isUserLoggedIn && (
+                <Files
+                  files={files}
+                  setFiles={handleSetFiles}
+                  userId={userDetails["userId"]}
+                />
+              )}
             </div>
-            <div className="w-[30%] pl-[4%] h-[80vh]">
+            {/* <div className="w-[30%] pl-[4%] h-[80vh]">
               <HomePageHeaderWrapper
                 title={"File Preview"}
                 showViewAll={false}
@@ -114,7 +124,7 @@ function App() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

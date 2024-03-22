@@ -13,7 +13,7 @@ const SideBar = () => {
         Your Files Now More Secured
       </div>
       <div className="mt-4 flex flex-col gap-2">
-        <SidePanelTile icon={HomeIcon} title={"Home"} routeURL={"/"} />
+        <SidePanelTile icon={HomeIcon} title={"Home"} routeURL={"/home"} />
         <SidePanelTile
           icon={RecentIcon}
           title={"Shared"}

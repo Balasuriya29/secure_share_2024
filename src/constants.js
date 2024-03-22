@@ -6,5 +6,7 @@ const constants = {
     BACKEND_URL : "http://localhost:3000",
     GET_SHARE_LINK_ENDPOINT : "/api/files/getShareLink",
     GET_SHARED_FILES_ENDPOINT : "/api/files/shared",
+    expirationPattern : /^(\d+)(d|m|s|h)$/,
+    noOfIPPattern : /^(?:[1-9]|[1-4]\d|50)$/,
 }
 export default constants;

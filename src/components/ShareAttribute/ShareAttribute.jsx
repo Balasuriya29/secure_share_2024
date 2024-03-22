@@ -1,20 +1,30 @@
-import SecureShareSwitch from "../Switch/Switch";
+import SelectedRoundIcon from "../../assets/SelectedRoundIcon";
 
-const ShareAttribute = ({title,isChecked,setIsChecked,children}) => {
+const ShareAttribute = ({ title, isChecked, setIsChecked, children }) => {
   return (
     <div
-      className={`px-4 py-2 rounded-[12px] ${
-        isChecked ? "bg-lightViolet" : "bg-none"
-      }`}
+      className={`w-[250px] rounded-[16px] border-[2px] border-${
+        isChecked ? "black" : "bg-gray-300"
+      } p-4`}
     >
-      <div className="flex items-center justify-between">
-        <div>{title}</div>
-        <SecureShareSwitch
-          checked={isChecked}
-          setChecked={setIsChecked}
-        />
+      <div className="flex">
+        <div className="flex flex-col">
+          <div className="font-[500] text-[18px] text-black">{title}</div>
+          <div className="text-[#757575] text-[14px]">What's {title} ?</div>
+        </div>
+        <div className="flex-grow"></div>
+        <div
+          className="cursor-pointer"
+          onClick={() => setIsChecked(!isChecked)}
+        >
+          {isChecked ? (
+            <SelectedRoundIcon />
+          ) : (
+            <div className="w-[32px] h-[32px] rounded-full border-[1px]"></div>
+          )}
+        </div>
       </div>
-      {isChecked && children}
+      <div className="my-[8%]">{children}</div>
     </div>
   );
 };

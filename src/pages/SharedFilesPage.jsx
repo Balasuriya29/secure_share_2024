@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import SideBar from "../components/SideBar/SideBar";
-import { getSharedFiles, getUserFromCookie } from "../utils/helper";
+import { getSharedFiles, getCurrentUserDetails } from "../utils/helper";
 import { useNavigate } from "react-router-dom";
 
 const SharedFilesPage = () => {
@@ -9,7 +9,7 @@ const SharedFilesPage = () => {
     (async () => {
       //Get user shared file
       console.log("Get user shared files");
-      const user = JSON.parse(getUserFromCookie());
+      const user = JSON.parse(getCurrentUserDetails());
       if (!user) {
         console.log("Cookie not found");
         navigate("/");
