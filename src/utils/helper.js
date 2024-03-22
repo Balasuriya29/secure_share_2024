@@ -179,3 +179,8 @@ export const getCurrentLocation = () => {
   console.log("---else----");
   return ({success:false,message:"Location permission denied"})
 }
+export const getShortenedFileName = (name, endIndex) =>
+  name.length > endIndex ? `${name.substring(0, endIndex)}...` : name;
+
+export const getFileType = (type) =>
+  type.substring(type.indexOf("/") + 1).toUpperCase();
