@@ -13,6 +13,7 @@ import CopyLinkIcon from "../../assets/CopyLinkIcon";
 import ShareModalCloseIcon from "../../assets/ShareModalCloseIcon";
 import GeoLocationDetails from "../ShareAttributeDetails/GeoLocationDetails";
 import IPControlDetails from "../ShareAttributeDetails/IPControlDetails";
+import NotifyMeDetails from "../ShareAttributeDetails/NotifyMeDetails";
 
 const ShareModal = ({ fileId, totalChunks, open, handleClose }) => {
   const navigate = useNavigate();
@@ -51,11 +52,14 @@ const ShareModal = ({ fileId, totalChunks, open, handleClose }) => {
   const [isGeoLocationChecked, setIsGeoLocationChecked] = useState(false);
   const [isTimeExpirationChecked, setIsTimeExpirationChecked] = useState(false);
   const [isIPControlChecked, setIsIPControlChecked] = useState(false);
+  const [isNotifyMeChecked, setIsNotifyMeChecked] = useState(false);
   const [snackBarOpened, setSnackBarOpened] = useState(false);
 
   const [expirationTime, setExpirationTime] = useState();
   const [radius, setRadius] = useState();
   const [noOfIP, setNoOfIP] = useState();
+  const [isViewsChecked, setIsViewsChecked] = useState(false);
+  const [isDownloadsChecked, setIsDownloadsChecked] = useState(false);
 
   const handleSubmit = async () => {
     let shareTypes = [];
@@ -112,6 +116,17 @@ const ShareModal = ({ fileId, totalChunks, open, handleClose }) => {
       }
 
       updateShareTypesAndAttributes("ipControl", { noOfIPs: noOfIP });
+    }
+
+    if (isNotifyMeChecked) {
+      if (!isViewsChecked && !isDownloadsChecked) {
+        console.log("--------Should select either views or downloads-----");
+        return;
+      }
+      updateShareTypesAndAttributes("notifyMe",{
+        views: isViewsChecked,
+        downloads: isDownloadsChecked,
+      });
     }
 
     const data = {
@@ -193,6 +208,19 @@ const ShareModal = ({ fileId, totalChunks, open, handleClose }) => {
               setIsChecked={setIsIPControlChecked}
             >
               <IPControlDetails noOfIP={noOfIP} setNoOfIP={setNoOfIP} />
+            </ShareAttribute>
+            <ShareAttribute
+              title={"Notify"}
+              isChecked={isNotifyMeChecked}
+              setIsChecked={setIsNotifyMeChecked}
+            >
+              <NotifyMeDetails
+                isViewsChecked={isViewsChecked}
+                setIsViewsChecked={setIsViewsChecked}
+                isDownloadsChecked={isDownloadsChecked}
+                setIsDownloadsChecked={setIsDownloadsChecked}
+                isNotifyMeChecked={isNotifyMeChecked}
+              />
             </ShareAttribute>
           </div>
           <div className="flex-grow"></div>

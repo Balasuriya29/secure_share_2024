@@ -13,8 +13,21 @@ const GetFile = () => {
   const [fileId, setFileId] = useState(null);
   const [totalChunks, setTotalChunks] = useState(null);
   const [errorMessage, setErrorMessage] = useState();
+  const [keyboardPressed, setKeyboardPressed] = useState(false);
 
   useEffect(() => {
+    document.addEventListener("keydown", (e) => {
+      e.preventDefault();
+      console.log(e.key);
+      setKeyboardPressed(true);
+    });
+
+    document.addEventListener("keyup", (e) => {
+      e.preventDefault();
+      console.log(e.key);
+      setKeyboardPressed(false);
+    });
+
     const socket = io("http://localhost:3001");
     socket.emit("getFile", {
       shareId: shareId,
@@ -24,6 +37,7 @@ const GetFile = () => {
       if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(
           async function (position) {
+            console.log(position);
             socket.emit("getFile", {
               shareId: shareId,
               latitude: position.coords.latitude,
@@ -104,7 +118,7 @@ const GetFile = () => {
       <SideBar />
       <div className="w-[85%] p-4 bg-white">
         <div className="w-full h-full bg-black rounded-[30px]">
-          {showFile ? (
+          {!keyboardPressed && showFile ? (
             <img
               src={bufferedArray.join("")}
               className="w-full h-full rounded-[30px]"

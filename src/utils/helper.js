@@ -97,10 +97,11 @@ export const login = async (username) => {
 }
 
 
-export const savePassword = async (password) => {
+export const savePassword = async (password,encryptionKey) => {
   try{
     const response = await axios.post(`${constants.BACKEND_URL}/api/auth/savePassword`,{
-        password
+        password,
+        encryptionKey
     },{
       headers:  {
         authorization : localStorage.getItem('access_token')
@@ -123,6 +124,10 @@ export const checkPassword = async (username,password) => {
     const response = await axios.post(`${constants.BACKEND_URL}/api/auth/checkPassword`,{
         username,
         password
+    },{
+      headers:  {
+        authorization : localStorage.getItem('access_token')
+      }
     });
     if(response.data.success){
       return (response.data);

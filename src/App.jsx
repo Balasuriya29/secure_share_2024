@@ -74,13 +74,32 @@ function App() {
                 />
               )}
             </div>
-            {/* <div className="w-[30%] pl-[4%] h-[80vh]">
+            <div className="w-[30%] h-[80vh]">
               <HomePageHeaderWrapper
-                title={"File Preview"}
+                title={"Notifications"}
                 showViewAll={false}
               />
-              <div className="w-full h-[160px] mt-[4%] bg-violet"></div>
-              <div>
+              <div className="mt-[4%] flex flex-col gap-4">
+                <div className="w-full rounded-[20px] p-4 flex flex-col gap-2 border-[1px]">
+                  <div className="font-[500]">Someone viewed your file</div>
+                  <div className="bg-[#F2F2F2] w-[40%] p-2 rounded-[12px] text-center text-black">
+                    File name
+                  </div>
+                </div>
+                <div className="w-full rounded-[20px] p-4 flex flex-col gap-2 border-[1px]">
+                  <div className="font-[500]">Someone viewed your file</div>
+                  <div className="bg-[#F2F2F2] w-[40%] p-2 rounded-[12px] text-center text-black">
+                    File name
+                  </div>
+                </div>
+                <div className="w-full rounded-[20px] p-4 flex flex-col gap-2 border-[1px]">
+                  <div className="font-[500]">Someone viewed your file</div>
+                  <div className="bg-[#F2F2F2] w-[40%] p-2 rounded-[12px] text-center text-black">
+                    File name
+                  </div>
+                </div>
+              </div>
+              {/* <div>
                 <div className="font-[500] text-[20px] mt-[4%]">File Name</div>
                 <div className="text-[#939393] font-[500] text-[18px]">
                   10.05 MB
@@ -123,8 +142,8 @@ function App() {
                     20m
                   </div>
                 </div>
-              </div>
-            </div> */}
+              </div> */}
+            </div>
           </div>
         </div>
       </div>
